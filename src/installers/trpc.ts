@@ -1,7 +1,9 @@
 import type { Installer } from "./index.js";
 import path from "path";
 import fs from "fs-extra";
+import { BaseContextTransformOptions } from "../../template/addons/trpc/base-context-transform.js";
 import { PKG_ROOT } from "../consts.js";
+import { run as jscodeshift } from "../helpers/jscodeshift/run.js";
 import { runPkgManagerInstall } from "../utils/runPkgManagerInstall.js";
 
 export const trpcInstaller: Installer = async ({
@@ -36,14 +38,7 @@ export const trpcInstaller: Installer = async ({
   const utilsSrc = path.join(trpcAssetDir, "utils.ts");
   const utilsDest = path.join(projectDir, "src/utils/trpc.ts");
 
-  const contextFile =
-    usingAuth && usingPrisma
-      ? "auth-prisma-context.ts"
-      : usingAuth && !usingPrisma
-      ? "auth-context.ts"
-      : !usingAuth && usingPrisma
-      ? "prisma-context.ts"
-      : "base-context.ts";
+  const contextFile = "base-context.ts";
   const contextSrc = path.join(trpcAssetDir, contextFile);
   const contextDest = path.join(projectDir, "src/server/router/context.ts");
 
@@ -75,4 +70,13 @@ export const trpcInstaller: Installer = async ({
     fs.copy(indexRouterSrc, indexRouterDest),
     fs.copy(exampleRouterSrc, exampleRouterDest),
   ]);
+
+  await jscodeshift<BaseContextTransformOptions>({
+    paths: [contextDest],
+    transform: path.join(trpcAssetDir, "base-context-transform.ts"),
+    transformOptions: {
+      usingAuth,
+      usingPrisma,
+    },
+  });
 };
