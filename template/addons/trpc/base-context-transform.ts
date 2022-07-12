@@ -1,7 +1,8 @@
 import { API, FileInfo } from "jscodeshift";
 import addImports from "jscodeshift-add-imports";
 
-import curryArrowFunctionHelpers from "../../../src/helpers/jscodeshift/curryArrowFunctionHelpers.js";
+// @ts-expect-error: importing with .js extension causes jscodeshift to not find the module
+import curryArrowFunctionHelpers from "../../../src/helpers/jscodeshift/curryArrowFunctionHelpers.ts";
 
 export interface BaseContextTransformOptions {
   usingAuth?: boolean;
