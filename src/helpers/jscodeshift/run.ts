@@ -1,4 +1,4 @@
-import * as childProcess from "child_process";
+import { execa } from "../../utils/execAsync.js";
 
 export type TransformOptionsValue =
   | null
@@ -41,24 +41,16 @@ export function run<TO extends TransformOptions<Record<string, unknown>>>(
     parser: "ts",
     extensions: "ts",
   };
-  return new Promise((resolve, reject) => {
-    childProcess.exec(
-      [
-        `jscodeshift`,
-        ...Object.entries(parameters).reduce<string[]>(
-          (acc, [key, value]) => [...acc, namedParam(key, value)],
-          [],
-        ),
-        ...paths,
-      ].join(" "),
-      (error, result) => {
-        if (error) {
-          return reject(error);
-        }
-        return resolve(result);
-      },
-    );
-  });
+  return execa(
+    [
+      `jscodeshift`,
+      ...Object.entries(parameters).reduce<string[]>(
+        (acc, [key, value]) => [...acc, namedParam(key, value)],
+        [],
+      ),
+      ...paths,
+    ].join(" "),
+  );
 }
 
 export default run;
