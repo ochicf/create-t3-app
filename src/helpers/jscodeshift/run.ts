@@ -3,20 +3,10 @@ import path from "path";
 import { run as jscodeshift } from "jscodeshift/src/Runner.js";
 import { PKG_ROOT } from "../../consts.js";
 
-export type TransformOptionsValue =
-  | null
-  | undefined
-  | string
-  | number
-  | boolean;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type TransformOptions = Record<any, any>;
 
-// eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
-export interface TransformOptions<TO extends Record<string, unknown>> {
-  // @ts-expect-error: had to use interface otherwise does not work
-  [key: keyof TO]: TransformOptionsValue;
-}
-
-export interface Config<TO extends TransformOptions<Record<string, unknown>>> {
+export interface Config<TO extends TransformOptions> {
   paths: string[];
   transform: string;
   transformOptions?: TO;
@@ -39,7 +29,7 @@ export interface TransformResult {
  * Wrapped function to define a clearer interface and set some defaults
  * that we need for all codemods we apply.
  */
-export function run<TO extends TransformOptions<Record<string, unknown>>>(
+export function run<TO extends TransformOptions>(
   config: Config<TO>,
 ): Promise<TransformResult> {
   const { transform, transformOptions, paths, ...jscodeshiftConfig } = config;
