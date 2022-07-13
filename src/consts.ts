@@ -6,6 +6,8 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const distPath = path.dirname(__filename);
 export const PKG_ROOT = path.join(distPath, "../");
+export const TEMPLATE_ROOT = path.join(PKG_ROOT, "template");
+export const TRANSFORM_ROOT = path.join(PKG_ROOT, "transform");
 
 //export const PKG_ROOT = path.dirname(require.main.filename);
 

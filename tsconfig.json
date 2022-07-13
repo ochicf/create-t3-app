@@ -44,6 +44,7 @@
     "skipLibCheck": true,
     "useDefineForClassFields": true
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "template"]
+  "include": ["src", "transform"],
+  "exclude": ["node_modules", "template"],
+  "references": [{ "path": "./transform" }]
 }

@@ -3,7 +3,7 @@ import {
   StatementOperationConfig,
   shouldPerformStatementOperation,
   addStatementOnce,
-} from "./statementOperations.js";
+} from "./statementOperations";
 
 export interface CurryArrowFunctionHelpersConfig {
   collection: j.Collection;
