@@ -29,16 +29,16 @@ export default function transformer(
       s`import { authOptions as nextAuthOptions } from "../../pages/api/auth/[...nextauth]";`,
     ]);
     createContextHelpers.ensureAsync();
-    createContextHelpers.insertBeforeReturnStatement(s`
+    createContextHelpers.insertBeforeReturnStatement(/* ts */ `
       const session =
         req && res && (await getServerSession(req, res, nextAuthOptions));
     `);
-    createContextHelpers.addReturnStatementProperty(s`session`);
+    createContextHelpers.addReturnStatementProperty(/* ts */ `session`);
   }
 
   if (options.usingPrisma) {
     addImports(root, s`import { prisma } from "../db/client";`);
-    createContextHelpers.addReturnStatementProperty(s`prisma`);
+    createContextHelpers.addReturnStatementProperty(/* ts */ `prisma`);
   }
 
   return root.toSource();

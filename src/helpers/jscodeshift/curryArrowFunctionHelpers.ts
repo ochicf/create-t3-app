@@ -1,19 +1,26 @@
-import j, { Collection, Statement } from "jscodeshift";
+import j from "jscodeshift";
+import {
+  StatementOperationConfig,
+  shouldPerformStatementOperation,
+  addStatementOnce,
+} from "./statementOperations.js";
 
 export interface CurryArrowFunctionHelpersConfig {
-  collection: Collection;
+  collection: j.Collection;
   name: string;
 }
 
 export interface CurryArrowFunctionHelpersReturn {
-  findVariableDeclaration(): Collection<j.VariableDeclaration>;
-  ensureAsync(): Collection<j.ArrowFunctionExpression>;
+  findVariableDeclaration(): j.Collection<j.VariableDeclaration>;
+  ensureAsync(): j.Collection<j.ArrowFunctionExpression>;
   insertBeforeReturnStatement(
-    statement: Statement,
-  ): Collection<j.ReturnStatement>;
+    source: string,
+    config?: StatementOperationConfig<j.ASTNode>,
+  ): j.Collection<j.ReturnStatement>;
   addReturnStatementProperty(
-    statement: Statement,
-  ): Collection<j.ObjectExpression>;
+    source: string,
+    config?: StatementOperationConfig<j.ObjectExpression>,
+  ): j.Collection<j.ObjectExpression>;
 }
 
 export default function curryArrowFunctionHelpers({
@@ -44,22 +51,40 @@ export default function curryArrowFunctionHelpers({
     return collection;
   }
 
-  function insertBeforeReturnStatement(statement: Statement) {
-    return findVariableDeclaration()
-      .find(j.ReturnStatement)
-      .at(0)
-      .insertBefore(statement);
+  function insertBeforeReturnStatement(
+    source: string,
+    config?: StatementOperationConfig<j.ASTNode>,
+  ): j.Collection<j.ReturnStatement> {
+    const collection = findVariableDeclaration().find(j.ReturnStatement).at(0);
+    return shouldPerformStatementOperation<j.ASTNode>(
+      source,
+      collection.paths(),
+      { once: addStatementOnce, ...config },
+    )
+      ? collection.insertBefore(source)
+      : collection;
   }
 
-  function addReturnStatementProperty(statement: Statement) {
+  function addReturnStatementProperty(
+    source: string,
+    config?: StatementOperationConfig<j.ObjectExpression>,
+  ): j.Collection<j.ObjectExpression> {
     const collection = findVariableDeclaration()
       .find(j.ReturnStatement)
       .find(j.ObjectExpression);
     const astPath = collection.paths()[0];
-    if (astPath) {
+
+    if (
+      astPath &&
+      shouldPerformStatementOperation(source, [astPath], {
+        once: addStatementOnce,
+        ...config,
+      })
+    ) {
       astPath.node.properties.push(
         // TODO: validate that statement is of of the accepted types?
-        statement as Parameters<typeof astPath.node.properties.push>[0],
+        // @ts-expect-error: expects specific types but it does work with string (at least with the ones wee need ATM)
+        source,
       );
     }
     return collection;
