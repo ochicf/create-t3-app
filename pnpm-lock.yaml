@@ -3,6 +3,7 @@ lockfileVersion: 5.4
 specifiers:
   '@commitlint/cli': ^17.0.3
   '@commitlint/config-conventional': ^17.0.3
+  '@types/common-tags': ^1.8.1
   '@types/figlet': ^1.5.4
   '@types/fs-extra': ^9.0.13
   '@types/gradient-string': ^1.1.2
@@ -13,6 +14,7 @@ specifiers:
   '@typescript-eslint/parser': ^5.30.0
   chalk: 5.0.1
   commander: ^9.3.0
+  common-tags: ^1.8.2
   eslint: ^8.18.0
   eslint-config-prettier: ^8.5.0
   eslint-import-resolver-typescript: ^3.1.1
@@ -35,6 +37,7 @@ specifiers:
 dependencies:
   chalk: 5.0.1
   commander: 9.3.0
+  common-tags: 1.8.2
   figlet: 1.5.2
   fs-extra: 10.1.0
   gradient-string: 2.0.1
@@ -46,6 +49,7 @@ dependencies:
 devDependencies:
   '@commitlint/cli': 17.0.3
   '@commitlint/config-conventional': 17.0.3
+  '@types/common-tags': 1.8.1
   '@types/figlet': 1.5.4
   '@types/fs-extra': 9.0.13
   '@types/gradient-string': 1.1.2
@@ -790,6 +794,10 @@ packages:
     resolution: {integrity: sha512-yOlFc+7UtL/89t2ZhjPvvB/DeAr3r+Dq58IgzsFkOAvVC6NMJXmCGjbptdXdR9qsX7pKcTL+s87FtYREi2dEEQ==}
     dev: true
 
+  /@types/common-tags/1.8.1:
+    resolution: {integrity: sha512-20R/mDpKSPWdJs5TOpz3e7zqbeCNuMCPhV7Yndk9KU2Rbij2r5W4RzwDPkzC+2lzUqXYu9rFzTktCBnDjHuNQg==}
+    dev: true
+
   /@types/figlet/1.5.4:
     resolution: {integrity: sha512-cskPTju7glYgzvkJy/hftqw7Fen3fsd0yrPOqcbBLJu+YdDQuA438akS1g+2XVKGzsQOnXGV2I9ePv6xUBnKMQ==}
     dev: true
@@ -1483,6 +1491,11 @@ packages:
   /commander/9.3.0:
     resolution: {integrity: sha512-hv95iU5uXPbK83mjrJKuZyFM/LBAoCV/XhVGkS5Je6tl7sxr6A0ITMw5WoRV46/UaJ46Nllm3Xt7IaJhXTIkzw==}
     engines: {node: ^12.20.0 || >=14}
+
+  /common-tags/1.8.2:
+    resolution: {integrity: sha512-gk/Z852D2Wtb//0I+kRFNKKE9dIIVirjoqPoA1wJU+XePVXZfGeBpk45+A1rKO4Q43prqWBNY/MiIeRLbPWUaA==}
+    engines: {node: '>=4.0.0'}
+    dev: false
 
   /commondir/1.0.1:
     resolution: {integrity: sha512-W9pAhw0ja1Edb5GVdIF1mjZw/ASI0AlShXM83UUGe2DVr5TdAPEA1OA8m/g8zWp9x6On7gqufY+FatDbC3MDQg==}
