@@ -15,7 +15,7 @@ export default function transformer(
   options: BaseContextTransformOptions,
 ) {
   const j = api.jscodeshift;
-  const s = j.template.statement;
+  const ts = j.template.statement;
   const root = j(file.source);
 
   const createContextHelpers = curryArrowFunctionHelpers({
@@ -25,8 +25,8 @@ export default function transformer(
 
   if (options.usingAuth) {
     addImports(root, [
-      s`import { unstable_getServerSession as getServerSession } from "next-auth";`,
-      s`import { authOptions as nextAuthOptions } from "../../pages/api/auth/[...nextauth]";`,
+      ts`import { unstable_getServerSession as getServerSession } from "next-auth";`,
+      ts`import { authOptions as nextAuthOptions } from "../../pages/api/auth/[...nextauth]";`,
     ]);
     createContextHelpers.ensureAsync();
     createContextHelpers.insertBeforeReturnStatement(/* ts */ `
@@ -37,7 +37,7 @@ export default function transformer(
   }
 
   if (options.usingPrisma) {
-    addImports(root, s`import { prisma } from "../db/client";`);
+    addImports(root, ts`import { prisma } from "../db/client";`);
     createContextHelpers.addReturnStatementProperty(/* ts */ `prisma`);
   }
 
