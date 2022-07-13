@@ -1,4 +1,7 @@
-import { execa } from "../../utils/execAsync.js";
+import path from "path";
+// @ts-expect-error: not typed in @types/jscodeshift
+import { run as jscodeshift } from "jscodeshift/src/Runner.js";
+import { PKG_ROOT } from "../../consts.js";
 
 export type TransformOptionsValue =
   | null
@@ -23,44 +26,34 @@ export interface Config<TO extends TransformOptions<Record<string, unknown>>> {
   verbose?: 0 | 1 | 2;
 }
 
+export interface TransformResult {
+  stats: Record<string, unknown>;
+  timeElapsed: string;
+  error: number;
+  ok: number;
+  nochange: number;
+  skip: 0;
+}
+
 /**
- * Redefined function because I could not import jscodeshift's Runner and make it
- * work as per explained in docs (see https://github.com/facebook/jscodeshift#usage-js).
- *
- * I've also taken this opportunity to define a clearer interface and set some defaults
+ * Wrapped function to define a clearer interface and set some defaults
  * that we need for all codemods we apply.
  */
 export function run<TO extends TransformOptions<Record<string, unknown>>>(
   config: Config<TO>,
-) {
-  const { transformOptions, paths, ...jscodeshiftConfig } = config;
+): Promise<TransformResult> {
+  const { transform, transformOptions, paths, ...jscodeshiftConfig } = config;
   const parameters = {
     ...transformOptions,
     silent: true,
     ...jscodeshiftConfig,
+    babel: true,
     parser: "ts",
-    extensions: "ts",
+    parserConfig: path.join(PKG_ROOT, "tsconfig.json"),
+    extensions: "ts,js",
   };
-  return execa(
-    [
-      `jscodeshift`,
-      ...Object.entries(parameters).reduce<string[]>(
-        (acc, [key, value]) => [...acc, namedParam(key, value)],
-        [],
-      ),
-      ...paths,
-    ].join(" "),
-  );
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
+  return jscodeshift(transform, paths, parameters);
 }
 
 export default run;
-
-export function namedParam(key: string, value: TransformOptionsValue): string {
-  if (value === undefined || value === null) {
-    return "";
-  }
-  if (typeof value === "boolean") {
-    return value ? `--${key}` : "";
-  }
-  return `--${key}=${value}`;
-}
