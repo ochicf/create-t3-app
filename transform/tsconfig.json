@@ -1,6 +1,8 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
+    "composite": true,
+    "noEmit": false,
     "moduleResolution": "Node"
   },
   "include": ["**/*.ts"]
