@@ -18,7 +18,7 @@ export const createProject = async ({
   noInstall,
 }: CreateProjectOptions) => {
   const pkgManager = getUserPkgManager();
-  const projectDir = path.resolve(process.cwd(), projectName);
+  const projectDir = getProjectDir(projectName);
 
   // Bootstraps the base Next.js application
   await scaffoldProject({ projectName, projectDir, pkgManager, noInstall });
@@ -39,3 +39,6 @@ export const createProject = async ({
 
   return projectDir;
 };
+
+export const getProjectDir = (projectName: string) =>
+  path.resolve(process.cwd(), projectName);
