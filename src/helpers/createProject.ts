@@ -4,6 +4,7 @@ import { getUserPkgManager } from "../utils/getUserPkgManager.js";
 import { installPackages } from "./installPackages.js";
 import { scaffoldProject } from "./scaffoldProject.js";
 import { selectAppFile, selectIndexFile } from "./selectBoilerplate.js";
+import { writePackageJsonCreateT3AppInfo } from "./writePackageJsonCreateT3AppInfo.js";
 
 interface CreateProjectOptions {
   projectName: string;
@@ -28,6 +29,13 @@ export const createProject = async ({
   // TODO: Look into using handlebars or other templating engine to scaffold without needing to maintain multiple copies of the same file
   await selectAppFile({ projectDir, packages });
   await selectIndexFile({ projectDir, packages });
+
+  await writePackageJsonCreateT3AppInfo({
+    projectDir,
+    pkgManager,
+    packages,
+    noInstall,
+  });
 
   return projectDir;
 };
