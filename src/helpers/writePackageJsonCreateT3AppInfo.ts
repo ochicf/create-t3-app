@@ -38,9 +38,9 @@ export const writePackageJsonCreateT3AppInfo = async (
         .then((stats) => stats.birthtime.toISOString())),
     updatedAt: pkgJson.createT3App?.createdAt ? new Date().toISOString() : null,
     packages: Object.entries(packages ?? {}).reduce(
-      (acc, [name, { inUse }]) => ({
+      (acc, [name, { installing, installed }]) => ({
         ...acc,
-        [name]: { installed: inUse },
+        [name]: { installed: installing || installed },
       }),
       {},
     ),
