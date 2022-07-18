@@ -30,7 +30,6 @@ export type Installer = (opts: InstallerOptions) => Promise<void>;
 
 export type PkgInstallerMap = {
   [pkg in AvailablePackages]: {
-    /** @deprecated: use `installed` instead */
     inUse: boolean;
     installed: boolean;
     installing: boolean;
@@ -45,33 +44,50 @@ export const buildPkgInstallerMap = async ({
   projectDir: string;
   packages: AvailablePackages[];
 }): Promise<PkgInstallerMap> => {
-  const pkgJson = (await fs.readJSON(
-    path.join(projectDir, "package.json"),
-  )) as T3AppPackageJson;
-  return {
-    nextAuth: {
-      inUse: pkgJson.createT3App?.packages?.nextAuth?.installed ?? false,
-      installed: pkgJson.createT3App?.packages?.nextAuth?.installed ?? false,
-      installing: packages.includes("nextAuth"),
-      installer: nextAuthInstaller,
+  const pkgJson = (await fs
+    .readJSON(path.join(projectDir, "package.json"))
+    .catch(() => null)) as null | T3AppPackageJson;
+
+  return availablePackages.reduce(
+    (acc, pkg) => {
+      const installed =
+        pkgJson?.createT3App?.packages?.[pkg]?.installed ?? false;
+      const installing = packages.includes(pkg);
+      return {
+        ...acc,
+        [pkg]: {
+          ...acc[pkg],
+          inUse: installing || installed,
+          installed,
+          installing,
+        },
+      };
     },
-    prisma: {
-      inUse: pkgJson.createT3App?.packages?.prisma?.installed ?? false,
-      installed: pkgJson.createT3App?.packages?.prisma?.installed ?? false,
-      installing: packages.includes("prisma"),
-      installer: prismaInstaller,
+    {
+      nextAuth: {
+        inUse: false,
+        installed: false,
+        installing: false,
+        installer: nextAuthInstaller,
+      },
+      prisma: {
+        inUse: false,
+        installed: false,
+        installing: false,
+        installer: prismaInstaller,
+      },
+      tailwind: {
+        inUse: false,
+        installed: false,
+        installing: false,
+        installer: tailwindInstaller,
+      },
+      trpc: {
+        inUse: false,
+        installed: false,
+        installing: false,
+        installer: trpcInstaller,
+      },
     },
-    tailwind: {
-      inUse: pkgJson.createT3App?.packages?.tailwind?.installed ?? false,
-      installed: pkgJson.createT3App?.packages?.tailwind?.installed ?? false,
-      installing: packages.includes("tailwind"),
-      installer: tailwindInstaller,
-    },
-    trpc: {
-      inUse: pkgJson.createT3App?.packages?.trpc?.installed ?? false,
-      installed: pkgJson.createT3App?.packages?.trpc?.installed ?? false,
-      installing: packages.includes("trpc"),
-      installer: trpcInstaller,
-    },
-  };
+  );
 };
