@@ -4,28 +4,21 @@ import fs from "fs-extra";
 import { BaseContextTransformOptions } from "../../transform/addons/trpc/base-context.js";
 import { TEMPLATE_ROOT, TRANSFORM_ROOT } from "../consts.js";
 import { run as jscodeshift } from "../helpers/jscodeshift/run.js";
-import { runPkgManagerInstall } from "../utils/runPkgManagerInstall.js";
 
 export const trpcInstaller: Installer = async ({
   projectDir,
-  pkgManager,
   packages,
-  noInstall,
+  runPkgManagerInstall,
 }) => {
   await runPkgManagerInstall({
-    pkgManager,
-    projectDir,
     packages: [
-      "react-query",
+      "react-query@3.39.2",
       "superjson",
       "@trpc/server",
       "@trpc/client",
       "@trpc/next",
       "@trpc/react",
-      "zod",
     ],
-    devMode: false,
-    noInstallMode: noInstall,
   });
   const usingAuth = packages?.nextAuth.inUse;
   const usingPrisma = packages?.prisma.inUse;
